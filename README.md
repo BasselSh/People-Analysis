@@ -3,8 +3,9 @@ A web application for analyzing people's economical status of VK profiles.
 ## Interface
 
 <div align="center">
-<img src="assets/gui.png" style="width: 80%; margin: auto; display: block;">
+<img src="assets/gui.png" style="width: 100%; margin: auto; display: block;">
 </div>
+<br>
 
 **Steps:**
 <br>
@@ -20,7 +21,9 @@ A web application for analyzing people's economical status of VK profiles.
 `having a car`, (sitting in a car) <br>
 
 ## Results
-<div>
-<img src="assets/in_fancy_dress.png" style="width: 40%">
-<img src="assets/in_a_car.png" style="width: 54%">
+<div align="center">
+<img src="assets/in_fancy_dress.png" style="width: 60%">
+</div>
+<div align="center">
+<img src="assets/in_a_car.png" style="width: 60%">
 </div>
