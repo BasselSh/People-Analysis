@@ -13,25 +13,11 @@ from lavis.models import load_model_and_preprocess
 import torch
 import shutil
 
-IDS = "180145628\n \
-9208295\n \
-21136698\n \
- \
-" 
-'''
-180145628
-9208295
-21136698
-279174107
-'''
-
-
 class Processor(Retriever):
     def __init__(self):
         super().__init__()
         self.device = torch.device("cpu")
         self.model, self.vis_processors, self.txt_processors = load_model_and_preprocess(name="blip_vqa", model_type="vqav2", is_eval=True, device=self.device)
-# ask a random question.
         self.ids = []
         self.profile_urls = []
         self.labels = []
@@ -144,12 +130,7 @@ class Processor(Retriever):
             if cond is None:
                 print("ID Not found")
                 continue
-            # if self.status == "Online" and status == "Offline":
-            #     print("Skipping offline user")
-            #     continue
-            # if active_days > self.last_seen:
-                # print("Skipping user with inactive days")
-                # continue
+
             print("PROFILE ID", id)
             profile_url, id2photos = self.get_vk_photos(id)
             if id2photos is None:
@@ -171,8 +152,6 @@ class Processor(Retriever):
                     f.write(str(id_cnt))
                 stats = pd.DataFrame({'pred': ['Normal', 'Rich', 'Not Recognized'], 'count': [normals, richs, nos]})
                 stats.to_csv(group_path / 'stats.csv', index=False)
-                
-            
             id_cnt += 1
 
         self.save_table(group_path, table)
@@ -203,13 +182,6 @@ class Processor(Retriever):
                 os.makedirs(f'{group_path}/normal', exist_ok=True)
                 ids = self.get_vk_group_members(group_id)
             return self.update_all_profiles(group_path, ids)
-
-    # def update_all_profiles_from_file(self, file):
-    #     df = pd.read_csv(file)
-    #     ids = df.iloc[:, 0].tolist()
-    #     group_path = self.ROOT / 'datasets' / 'temp'
-    #     os.makedirs(group_path, exist_ok=True)
-    #     return gr.Label(label="Group added"), self.update_all_profiles(group_path, ids)
 
     def download_table(self, table):
         path = 'table_temp.csv'
@@ -243,13 +215,10 @@ class Processor(Retriever):
         groups = self.get_available_groups()
         default_group = groups[0] if groups else None
         dropdown = gr.Dropdown(label='Group ID', choices=groups, value=default_group)
-        # stats = pd.read_csv('datasets/cccp_fitness/rich_stats.csv')
-        # bar = gr.BarPlot(stats, x='pred', y='count', x_title='Pred', y_title='Count')
         bar, table_df = processor.get_group_stats_and_table(default_group)
         if bar is None:
             bar = gr.BarPlot(pd.DataFrame(), x='pred', y='count', x_title='Pred', y_title='Count')
         select_online = gr.Button("Select Online")
-        # bar = gr.BarPlot(x=stats.iloc[0].to_list(), y=stats.columns.to_list())
         rich_table = gr.DataFrame(table_df)
         self.rich_table = rich_table
         return dropdown, bar, select_online, rich_table
@@ -272,8 +241,7 @@ class Processor(Retriever):
 processor = Processor()
 with gr.Blocks() as demo:
     with gr.Tab("Add new group"):
-        # file = gr.File(label='ids file', file_types=['csv'])
-        search = gr.Textbox(label='Group ID')#value=IDS)
+        search = gr.Textbox(label='Group ID')
         submit = gr.Button("Add group")
         status = gr.Label(label="")
 
@@ -281,14 +249,10 @@ with gr.Blocks() as demo:
         dropdown, bar, select_online, rich_table = processor.update_analysis_tab()
         download_bn = gr.Button("Download Table")
         download = gr.File()
-    # Logic to combine the image input and button click as inputs
     submit.click(processor.update_all_profiles_from_group, inputs=search, outputs=[status, dropdown, bar, select_online, rich_table])
-    # file.upload(processor.update_all_profiles_from_file, inputs=file, outputs=[table])
     download_bn.click(processor.download_table, inputs=rich_table, outputs=[download])
     dropdown.select(processor.get_group_stats_and_table, inputs=dropdown, outputs=[bar, rich_table])
     select_online.click(processor.show_online_rich_users, inputs=dropdown, outputs=[rich_table])
 
 
 demo.launch()#share=True
-
-#cccp_fitness

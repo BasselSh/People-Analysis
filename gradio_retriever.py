@@ -47,10 +47,9 @@ class Retriever:
             else: 
                 cond2 = False
         print("IDS LENGTH try", len(all_ids))
-        # print(ids)
         return list(map(str, all_ids))
+    
     def get_vk_group_members(self, group_id):
-        # group_id = 'melnitsamusic'
         mx = 0
         ids_max = []
         for i in range(2):
@@ -69,7 +68,6 @@ class Retriever:
         url = f"https://api.vk.com/method/photos.get?owner_id={profile_id}&album_id=profile&access_token={self.access_token}&v={self.version}"
         
         print("getting urls")
-        # response = requests.get(url).json()
         response = self.read_url(url)
         if response is None:
             return None, None
@@ -83,11 +81,6 @@ class Retriever:
             return "Error: No photos found", None
         
         return photo_urls[-1], self.id2photos
-    
-    # def get_photo(self):
-    #     photo_url = self.photos[self.id]
-    #     return photo_url
-    
 
     def get_user_last_seen(self, user_id):
         url = f"https://api.vk.com/method/users.get?user_ids={user_id}&fields=last_seen,online&access_token={self.access_token}&v={self.version}"
@@ -100,9 +93,7 @@ class Retriever:
         user_info = response["response"][0]
         
         if "last_seen" in user_info:
-            # last_seen_time = datetime.utcfromtimestamp(user_info['last_seen']['time']).strftime('%Y-%m-%d %H:%M:%S')
             last_seen_time = datetime.fromtimestamp(user_info['last_seen']['time'])
-            # platform = user_info['last_seen']['platform']
             online_status = "Online" if user_info['online'] == 1 else "Offline"
             time_difference = int((last_seen_time.date()- datetime.today().date()).days)
             return time_difference, online_status
@@ -135,10 +126,6 @@ class Retriever:
                 response = requests.get(url)
                 response.raise_for_status()  # Check if the request was successful
                 return response.json()
-            # except requests.exceptions.Timeout as e:
-            #     if i == retries - 1:
-            #         return None
-            #     time.sleep((2 ** i))
             except requests.exceptions.RequestException as e:
                 if i == retries - 1:
                     return None
@@ -147,26 +134,4 @@ class Retriever:
                 if i == retries - 1:
                     return None
                 time.sleep((2 ** i))
-            # except urllib3.exceptions.MaxRetryError as e:
-            #     if i == retries - 1:
-            #         return None
-            #     time.sleep((2 ** i))
-            # except urllib3.exceptions.NewConnectionError as e:
-            # 
-                # if i == retries - 1:
-                #     return None
-                # time.sleep((2 ** i))
-            
-
         return None
-
-
-if __name__ == "__main__":
-    ret = Retriever()
-    # ret.get_vk_group_members('melnitsamusic')
-    t, status = ret.get_user_last_seen("21136698")
-    print(t, status)
-
-    # with open('ids.txt', 'r') as f:
-    #     ids = f.read().split()
-    #     print(len(ids))
