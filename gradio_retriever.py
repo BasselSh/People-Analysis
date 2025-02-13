@@ -7,7 +7,7 @@ from datetime import datetime
 class Retriever:
     def __init__(self):
         self.id2photos = dict()
-        self.access_token = "vk1.a.LO2lVp2NnMYL3Fl9WZBEKz5xB-GZgfLtUMp0Fhk95X133zQAmC6Q9zLB2NmQEOt4v09O43ZqyEpp3nZLGGBgW3o2xpIiwvXK3ciNZvfJO363lMw27PQ8WX4E9OfbEzJP5AiZopJlFj2LCisWx0uTiuHKiF8shrzRo6kCyqlwc2OUe7pJz6tqd1k4MgmRWqQp3wZG1sA9xsUsdBfiyQ-Yug"
+        self.access_token = #Secret
         self.version = "5.131"
         self.group_folder = None
 
